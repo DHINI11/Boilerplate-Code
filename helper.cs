@@ -208,3 +208,84 @@ class Program
         }
     }
 }
+
+// Get Custom attribute 
+
+using System;
+using AngleSharp;
+using AngleSharp.Dom;
+
+class Program
+{
+    static void Main()
+    {
+        // Your HTML content or URL goes here
+        string html = "<html><body><div class='example' data-custom-attribute='custom-value'>Target Element</div></body></html>";
+
+        // Create a new browsing context
+        var context = BrowsingContext.New(Configuration.Default);
+
+        // Parse the HTML
+        var document = context.OpenAsync(req => req.Content(html)).Result;
+
+        // Find the element with class name "example"
+        var exampleElement = document.QuerySelector(".example");
+
+        if (exampleElement != null)
+        {
+            // Get the value of the custom attribute "data-custom-attribute"
+            string customAttributeValue = exampleElement.GetAttribute("data-custom-attribute");
+
+            if (!string.IsNullOrEmpty(customAttributeValue))
+            {
+                Console.WriteLine("Custom Attribute Value: " + customAttributeValue);
+            }
+            else
+            {
+                Console.WriteLine("Custom attribute not found or has no value.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Element with class name 'example' not found");
+        }
+    }
+}
+
+// set attribute 
+
+using System;
+using AngleSharp;
+using AngleSharp.Dom;
+
+class Program
+{
+    static void Main()
+    {
+        // Your HTML content or URL goes here
+        string html = "<html><body><div data-custom-attribute='original-value'>Target Element</div></body></html>";
+
+        // Create a new browsing context
+        var context = BrowsingContext.New(Configuration.Default);
+
+        // Parse the HTML
+        var document = context.OpenAsync(req => req.Content(html)).Result;
+
+        // Find the element by custom attribute
+        var elementWithCustomAttribute = document.QuerySelector("[data-custom-attribute]");
+
+        if (elementWithCustomAttribute != null)
+        {
+            // Set a new value for the custom attribute
+            elementWithCustomAttribute.SetAttribute("data-custom-attribute", "new-value");
+
+            // Print the updated HTML
+            Console.WriteLine(document.DocumentElement.OuterHtml);
+        }
+        else
+        {
+            Console.WriteLine("Element with custom attribute not found");
+        }
+    }
+}
+
