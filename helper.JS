@@ -170,6 +170,52 @@ var cell = sheet.getCell(0, 0);
 // Set the name property for the cell's style
 cell.s('name', 'MyCellName');
 
+///----------------------------------------------------------- Alternate 3
+
+// Assuming you have a Spread instance
+var spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
+
+// Assuming you have a sheet instance
+var sheet = spread.getSheet(0);
+
+// Function to generate a unique name
+function generateUniqueName() {
+  return 'Cell_' + new Date().getTime(); // You can customize the naming convention
+}
+
+// Function to set a unique name for a cell and store the mapping
+function setUniqueNameForCell(cell) {
+  var uniqueName = generateUniqueName();
+
+  // Set the unique name to the cell's style
+  cell.s('name', uniqueName);
+
+  // Store the mapping in localStorage
+  var cellMappings = JSON.parse(localStorage.getItem('CellMappings')) || {};
+  cellMappings[uniqueName] = { row: cell.row, col: cell.col };
+  localStorage.setItem('CellMappings', JSON.stringify(cellMappings));
+}
+
+// Assuming you want to set a unique name to the cell at row 1, column 1
+var cell = sheet.getCell(0, 0);
+
+// Set a unique name for the cell and store the mapping
+setUniqueNameForCell(cell);
+
+
+
+
+--=======================
+
+// Retrieve the mapping from localStorage using the unique name
+var uniqueName = cell.s('name');
+var cellMappings = JSON.parse(localStorage.getItem('CellMappings')) || {};
+var cellPosition = cellMappings[uniqueName];
+
+// Now, cellPosition.row and cellPosition.col contain the row and column indices of the cell
+console.log('Row:', cellPosition.row, 'Column:', cellPosition.col);
+
+
 
 
 
