@@ -135,4 +135,27 @@ setCellUniqueId(row, col, uniqueId);
 var retrievedUniqueId = getCellUniqueId(row, col);
 console.log('Retrieved Unique ID:', retrievedUniqueId);
 
+// ---------------------------------------------------------------------------- Add name property 
+// Assuming you have a Spread instance
+var spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
+
+// Assuming you have a sheet instance
+var sheet = spread.getSheet(0);
+
+// Assuming you want to add a name to cell at row 1, column 1
+var cell = sheet.getCell(0, 0);
+
+// Create a named style
+var namedStyle = new GC.Spread.Sheets.Style();
+namedStyle.name = "MyNamedStyle"; // Set the name for the style
+namedStyle.backColor = "yellow"; // Set other style properties as needed
+
+// Add the named style to the workbook
+spread.addNamedStyle(namedStyle);
+
+// Apply the named style to the cell
+cell.setStyle("MyNamedStyle");
+
+
+
 
