@@ -156,6 +156,21 @@ spread.addNamedStyle(namedStyle);
 // Apply the named style to the cell
 cell.setStyle("MyNamedStyle");
 
+///------------------------------------Altername to add name
+
+// Assuming you have a Spread instance
+var spread = new GC.Spread.Sheets.Workbook(document.getElementById("ss"));
+
+// Assuming you have a sheet instance
+var sheet = spread.getSheet(0);
+
+// Assuming you want to set a name to the cell at row 1, column 1
+var cell = sheet.getCell(0, 0);
+
+// Set the name property for the cell's style
+cell.s('name', 'MyCellName');
+
+
 
 
 
