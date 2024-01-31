@@ -1,0 +1,30 @@
+var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'));
+var sheet = spread.getActiveSheet();
+var sheetData = sheet.toJSON();
+var blob = new Blob([JSON.stringify(sheetData)], { type: 'application/json' });
+
+
+
+
+
+var ssjsonFile = new File([blob], 'spreadsheet.ssjson', { type: 'application/ssjson' });
+
+
+
+
+var formData = new FormData();
+formData.append('file', ssjsonFile);
+
+$.ajax({
+  url: 'your_upload_url',
+  type: 'POST',
+  data: formData,
+  contentType: false,
+  processData: false,
+  success: function(response) {
+    // Handle success
+  },
+  error: function(error) {
+    // Handle error
+  }
+});
