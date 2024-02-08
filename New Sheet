@@ -97,3 +97,15 @@ spread.bind(GC.Spread.Sheets.Events.Pasting, function (sender, args) {
 
 // ... rest of your SpreadJS initialization code ...
 
+
+
+$(document).ready(function(){
+    $('#your_input_field').on('input', function(){
+        var inputValue = $(this).val();
+        var regex = /[\/&;:]/g; // Regular expression to remove "/", "&", ";", and ":"
+
+        if(regex.test(inputValue)){
+            $(this).val(inputValue.replace(regex, '')); // Remove specified special characters
+        }
+    });
+});
