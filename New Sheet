@@ -112,12 +112,9 @@ $(document).ready(function(){
 
 
 
+var activeSheet = spread.getActiveSheet();
+var activeRowIndex = activeSheet.getActiveRowIndex();
+var activeColumnIndex = activeSheet.getActiveColumnIndex();
 
-// Assuming you have a reference to the worksheet and the cell
-var worksheet = // Reference to your worksheet;
-var cell = // Reference to your cell;
-
-// Get the cell address like 'A1'
-var cellAddress = worksheet.getCellAddress(cell.row, cell.col);
-
-console.log(cellAddress); // Output will be something like 'A1'
+var cellAddress = GC.Spread.Sheets.CellTypes.CellTypeHelper.cellIndexToName(activeRowIndex, activeColumnIndex);
+console.log("Active cell address: " + cellAddress);
