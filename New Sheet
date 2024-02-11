@@ -111,10 +111,16 @@ $(document).ready(function(){
 });
 
 
+// Get active sheet
+var sheet = spread.getActiveSheet();
 
-var activeSheet = spread.getActiveSheet();
-var activeRowIndex = activeSheet.getActiveRowIndex();
-var activeColumnIndex = activeSheet.getActiveColumnIndex();
+// Get active cell indices
+var rowIndex = sheet.getActiveRowIndex();
+var colIndex = sheet.getActiveColumnIndex();
 
-var cellAddress = GC.Spread.Sheets.CellTypes.CellTypeHelper.cellIndexToName(activeRowIndex, activeColumnIndex);
-console.log("Active cell address: " + cellAddress);
+// Get column header name
+var colHeader = sheet.getColumnName(colIndex);
+
+// Display row and column header names
+console.log("Active row header name: " + (rowIndex + 1)); // Adding 1 to convert zero-based index to 1-based index
+console.log("Active column header name: " + colHeader);
