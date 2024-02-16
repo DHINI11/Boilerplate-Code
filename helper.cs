@@ -398,3 +398,85 @@ class Program
         Console.WriteLine("Sheet1 data replaced successfully.");
     }
 }
+// open xml
+
+using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Step 1: Read the XLSX file using OpenXML
+        string filePath = "input.xlsx";
+        var ssjsonData = new List<Dictionary<string, object>>();
+
+        using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(filePath, false))
+        {
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+            WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+            Worksheet worksheet = worksheetPart.Worksheet;
+            SharedStringTablePart stringTablePart = workbookPart.SharedStringTablePart;
+            SharedStringTable sharedStringTable = stringTablePart.SharedStringTable;
+
+            // Step 2: Transform the data
+            var headers = new List<string>();
+            var rows = worksheet.Descendants<Row>().Skip(1); // Skip header row
+
+            foreach (Cell cell in worksheetPart.Worksheet.Descendants<Cell>())
+            {
+                string cellValue = cell.CellValue?.InnerText;
+
+                if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+                {
+                    int.TryParse(cellValue, out int sharedStringIndex);
+                    cellValue = sharedStringTable.ElementAt(sharedStringIndex).InnerText;
+                }
+
+                if (cell.RowIndex == 1)
+                {
+                    headers.Add(cellValue);
+                }
+                else
+                {
+                    int columnIndex = CellReferenceToIndex(cell.CellReference);
+                    if (ssjsonData.Count < columnIndex + 1)
+                    {
+                        ssjsonData.Add(new Dictionary<string, object>());
+                    }
+                    ssjsonData[columnIndex].Add(headers[columnIndex], cellValue);
+                }
+            }
+        }
+
+        // Step 3: Serialize to SSJSON
+        var ssjson = JsonConvert.SerializeObject(ssjsonData);
+
+        // Write SSJSON to a file
+        File.WriteAllText("output.ssjson", ssjson);
+
+        Console.WriteLine("Conversion complete.");
+    }
+
+    static int CellReferenceToIndex(string cellReference)
+    {
+        int index = 0;
+        foreach (char c in cellReference)
+        {
+            if (Char.IsLetter(c))
+            {
+                index = index * 26 + (c - 'A' + 1);
+            }
+            else
+            {
+                break;
+            }
+        }
+        return index - 1;
+    }
+}
