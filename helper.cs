@@ -289,3 +289,53 @@ class Program
     }
 }
 
+
+
+// ssjson convert
+
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ClosedXML.Excel;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Step 1: Read the XLSX file
+        using (var workbook = new XLWorkbook("input.xlsx"))
+        {
+            var ws = workbook.Worksheet(1); // Assuming data is in the first sheet
+
+            // Step 2: Transform the data
+            var ssjsonData = new List<Dictionary<string, object>>();
+            var headers = new List<string>();
+
+            foreach (var cell in ws.FirstRowUsed().Cells())
+            {
+                headers.Add(cell.Value.ToString());
+            }
+
+            foreach (var row in ws.RowsUsed().Skip(1)) // Skip header row
+            {
+                var rowData = new Dictionary<string, object>();
+
+                for (int i = 0; i < headers.Count; i++)
+                {
+                    rowData.Add(headers[i], row.Cell(i + 1).Value);
+                }
+
+                ssjsonData.Add(rowData);
+            }
+
+            // Step 3: Serialize to SSJSON
+            var ssjson = JsonConvert.SerializeObject(ssjsonData);
+
+            // Write SSJSON to a file
+            File.WriteAllText("output.ssjson", ssjson);
+
+            Console.WriteLine("Conversion complete.");
+        }
+    }
+}
