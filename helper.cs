@@ -339,3 +339,62 @@ class Program
         }
     }
 }
+
+
+// replace file ssjson
+
+using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Linq;
+
+public class SheetData
+{
+    public string Name { get; set; }
+    public object Data { get; set; }
+}
+
+public class SSJSONFile
+{
+    public SheetData[] Sheets { get; set; }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Read contents of both SSJSON files into C# objects
+        string fileAPath = "path_to_file_A.ssjson";
+        string fileBPath = "path_to_file_B.ssjson";
+
+        SSJSONFile ssjsonA = JsonConvert.DeserializeObject<SSJSONFile>(File.ReadAllText(fileAPath));
+        SSJSONFile ssjsonB = JsonConvert.DeserializeObject<SSJSONFile>(File.ReadAllText(fileBPath));
+
+        // Find sheet1 data in file A
+        var sheet1A = ssjsonA.Sheets.FirstOrDefault(sheet => sheet.Name == "sheet1");
+        if (sheet1A != null)
+        {
+            // Replace sheet1 data in file B with data from file A
+            var sheet1BIndex = Array.FindIndex(ssjsonB.Sheets, sheet => sheet.Name == "sheet1");
+            if (sheet1BIndex != -1)
+            {
+                ssjsonB.Sheets[sheet1BIndex].Data = sheet1A.Data;
+            }
+            else
+            {
+                // Sheet1 not found in file B, you can handle this case accordingly
+                Console.WriteLine("Sheet1 not found in file B.");
+            }
+        }
+        else
+        {
+            // Sheet1 not found in file A, you can handle this case accordingly
+            Console.WriteLine("Sheet1 not found in file A.");
+        }
+
+        // Write the modified data back to file B
+        File.WriteAllText(fileBPath, JsonConvert.SerializeObject(ssjsonB));
+
+        Console.WriteLine("Sheet1 data replaced successfully.");
+    }
+}
