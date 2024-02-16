@@ -480,3 +480,86 @@ class Program
         return index - 1;
     }
 }
+
+
+// new convert
+
+
+using System;
+using System.IO;
+using System.Collections.Generic;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Newtonsoft.Json;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string inputFilePath = "input.xlsx";
+        string outputFilePath = "output.ssjson";
+
+        // Load the Excel file
+        using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(inputFilePath, false))
+        {
+            WorkbookPart workbookPart = spreadsheetDocument.WorkbookPart;
+            WorksheetPart worksheetPart = workbookPart.WorksheetParts.First();
+            Worksheet worksheet = worksheetPart.Worksheet;
+            SheetData sheetData = worksheet.GetFirstChild<SheetData>();
+
+            // Parse the rows and cells to extract data
+            List<Dictionary<string, string>> rowData = new List<Dictionary<string, string>>();
+            foreach (Row row in sheetData.Elements<Row>())
+            {
+                Dictionary<string, string> cellData = new Dictionary<string, string>();
+                foreach (Cell cell in row.Elements<Cell>())
+                {
+                    string columnName = GetColumnName(cell.CellReference);
+                    string cellValue = GetCellValue(spreadsheetDocument, cell);
+                    cellData.Add(columnName, cellValue);
+                }
+                rowData.Add(cellData);
+            }
+
+            // Serialize the data to SSJSON format
+            string ssjson = JsonConvert.SerializeObject(rowData, Formatting.Indented);
+
+            // Write the SSJSON data to the output file
+            File.WriteAllText(outputFilePath, ssjson);
+        }
+
+        Console.WriteLine("Conversion completed.");
+    }
+
+    static string GetCellValue(SpreadsheetDocument document, Cell cell)
+    {
+        SharedStringTablePart stringTablePart = document.WorkbookPart.SharedStringTablePart;
+        if (cell.DataType != null && cell.DataType.Value == CellValues.SharedString)
+        {
+            return stringTablePart.SharedStringTable.ChildElements[int.Parse(cell.InnerText)].InnerText;
+        }
+        else
+        {
+            return cell.InnerText;
+        }
+    }
+
+    static string GetColumnName(string cellReference)
+    {
+        // Excel cell references are in the form of letters followed by numbers
+        // We extract letters to determine the column name
+        string columnName = "";
+        foreach (char c in cellReference)
+        {
+            if (char.IsLetter(c))
+            {
+                columnName += c;
+            }
+            else
+            {
+                break;
+            }
+        }
+        return columnName;
+    }
+}
