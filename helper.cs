@@ -619,3 +619,4 @@ spread.fromJSON({
   frozenRows: 1, // Example of optional parameter
   frozenColumns: 1 // Example of optional parameter
 });
+
