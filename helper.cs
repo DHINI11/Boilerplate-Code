@@ -597,3 +597,25 @@ public class Program
         }
     }
 }
+
+
+// Assuming 'fileBuffer' is your file buffer
+// Convert file buffer to string
+const fileString = new TextDecoder().decode(fileBuffer);
+
+// Parse the string into a JSON object
+const jsonObject = JSON.parse(fileString);
+
+// Modify the JSON object if needed
+// For example, you can add or modify properties
+
+// Convert the modified JSON object back to a string in SSJSON format
+const ssjsonString = JSON.stringify(jsonObject);
+
+// Now, you can open the sheet using the SSJSON string
+spread.fromJSON({
+  data: ssjsonString,
+  sheetIndex: 0,
+  frozenRows: 1, // Example of optional parameter
+  frozenColumns: 1 // Example of optional parameter
+});
