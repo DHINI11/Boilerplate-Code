@@ -218,5 +218,28 @@ console.log('Row:', cellPosition.row, 'Column:', cellPosition.col);
 
 
 
+// Assuming 'xlsxFile' is your XLSX file
+// Read the XLSX file
+const reader = new FileReader();
 
+reader.onload = function(event) {
+  const data = event.target.result;
+
+  // Parse the XLSX file
+  const workbook = XLSX.read(data, { type: 'binary' });
+
+  // Convert the parsed workbook to SSJSON format
+  const ssjson = XLSX.utils.to_sheet_json(workbook);
+
+  // Now you can use 'ssjson' to open the sheet in SpreadJS
+  spread.fromJSON({
+    data: ssjson,
+    sheetIndex: 0,
+    frozenRows: 1, // Example of optional parameter
+    frozenColumns: 1 // Example of optional parameter
+  });
+};
+
+// Start reading the XLSX file
+reader.readAsBinaryString(xlsxFile);
 
