@@ -563,3 +563,37 @@ class Program
         return columnName;
     }
 }
+
+// dynami selection 
+using Newtonsoft.Json;
+using System;
+using System.Linq;
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Sample JSON string
+        string json = @"{
+            ""students"": [
+                { ""name"": ""Alice"", ""age"": 20 },
+                { ""name"": ""Bob"", ""age"": 22 },
+                { ""name"": ""Charlie"", ""age"": 21 }
+            ]
+        }";
+
+        // Deserialize JSON into dynamic object
+        dynamic data = JsonConvert.DeserializeObject<dynamic>(json);
+
+        // Query dynamic object using LINQ
+        var queryResult = from student in data.students
+                          where student.age == 21
+                          select student;
+
+        // Output the result
+        foreach (var student in queryResult)
+        {
+            Console.WriteLine($"Name: {student.name}, Age: {student.age}");
+        }
+    }
+}
