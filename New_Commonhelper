@@ -1,0 +1,55 @@
+using System;
+using System.IO;
+using Newtonsoft.Json.Linq;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Read the contents of the JSON file
+        string filePath = "your_file.ssjson";
+        string jsonString = File.ReadAllText(filePath);
+
+        // Parse the JSON data
+        JObject jsonData = JObject.Parse(jsonString);
+
+        // Replace the data of Sheet 1 with Sheet 2
+        var sheet1Data = jsonData["sheets"][0]["data"];
+        var sheet2Data = jsonData["sheets"][1]["data"];
+        jsonData["sheets"][0]["data"] = sheet2Data;
+
+        // Save the modified JSON data back to the file
+        File.WriteAllText("your_file_modified.ssjson", jsonData.ToString());
+
+        Console.WriteLine("Data replaced and saved successfully.");
+    }
+}
+
+
+
+//js
+
+const fs = require('fs');
+
+// Read the contents of the JSON file
+fs.readFile('your_file.ssjson', 'utf8', (err, data) => {
+    if (err) {
+        console.error('Error reading file:', err);
+        return;
+    }
+
+    // Parse the JSON data
+    const jsonData = JSON.parse(data);
+
+    // Replace the data of Sheet 1 with Sheet 2
+    jsonData.sheets[0].data = jsonData.sheets[1].data;
+
+    // Save the modified JSON data back to the file
+    fs.writeFile('your_file_modified.ssjson', JSON.stringify(jsonData, null, 4), (err) => {
+        if (err) {
+            console.error('Error writing file:', err);
+            return;
+        }
+        console.log('Data replaced and saved successfully.');
+    });
+});
