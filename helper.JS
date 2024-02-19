@@ -243,3 +243,36 @@ reader.onload = function(event) {
 // Start reading the XLSX file
 reader.readAsBinaryString(xlsxFile);
 
+
+
+// Function to convert XLSX file to SSJSON
+function convertXLSXtoSSJSON(file) {
+    var reader = new FileReader();
+
+    reader.onload = function(event) {
+        var data = event.target.result;
+
+        // Parse the XLSX file
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        // Convert the parsed workbook to SSJSON format
+        var ssjson = XLSX.utils.to_sheet_json(workbook);
+
+        // Now you can use 'ssjson' to open the sheet in SpreadJS
+        // For example:
+        spread.fromJSON({
+            data: ssjson,
+            sheetIndex: 0
+        });
+    };
+
+    reader.readAsBinaryString(file);
+}
+
+// Assuming 'fileInput' is your file input element
+fileInput.addEventListener('change', function(event) {
+    var file = event.target.files[0];
+    if (file) {
+        convertXLSXtoSSJSON(file);
+    }
+});
