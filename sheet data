@@ -28,3 +28,30 @@ $.ajax({
     // Handle error
   }
 });
+
+
+// Assuming you have already loaded Grapecity and opened both files
+
+// Get reference to source and destination sheets
+var sourceSheet = file1.getSheet(0); // Assuming sheet1 in file1
+var destSheet = file2.getSheet(0); // Assuming sheet1 in file2
+
+// Loop through cells in the source sheet
+sourceSheet.getRange().forEach(function(cell) {
+    // Copy content and formulas
+    var content = cell.text();
+    var formula = cell.formula();
+    
+    // Get corresponding cell in destination sheet
+    var destCell = destSheet.getCell(cell.row(), cell.col());
+    
+    // Paste content and formula
+    destCell.text(content);
+    destCell.formula(formula);
+    
+    // Add tag
+    destCell.tag("your_tag");
+});
+
+// Save changes to file2
+file2.save();
