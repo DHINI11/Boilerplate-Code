@@ -1,57 +1,24 @@
-var spread = new GC.Spread.Sheets.Workbook(document.getElementById('ss'));
-var sheet = spread.getActiveSheet();
-var sheetData = sheet.toJSON();
-var blob = new Blob([JSON.stringify(sheetData)], { type: 'application/json' });
 
 
+// Assuming you have references to the source and target SpreadJS instances
+var sourceSheet = sourceSpread.getSheet(0); // Assuming the source sheet is the first sheet
+var targetSheet = targetSpread.getSheet(0); // Assuming the target sheet is the first sheet
 
+// Define the source range (e.g., A1:B2)
+var sourceRange = "A1:B2";
 
+// Get the data, formulas, and cell tags from the source range
+var sourceData = sourceSheet.getRange(sourceRange).getDataSource();
+var sourceFormulas = sourceSheet.getRange(sourceRange).formulas();
+var sourceCellTags = sourceSheet.getRange(sourceRange).tag();
 
-var ssjsonFile = new File([blob], 'spreadsheet.ssjson', { type: 'application/ssjson' });
+// Define the target range where you want to copy the data
+var targetRange = "C3"; // Adjust as needed
 
+// Set the data, formulas, and cell tags to the target range
+targetSheet.getRange(targetRange).setDataSource(sourceData);
+targetSheet.getRange(targetRange).formulas(sourceFormulas);
+targetSheet.getRange(targetRange).tag(sourceCellTags);
 
-
-
-var formData = new FormData();
-formData.append('file', ssjsonFile);
-
-$.ajax({
-  url: 'your_upload_url',
-  type: 'POST',
-  data: formData,
-  contentType: false,
-  processData: false,
-  success: function(response) {
-    // Handle success
-  },
-  error: function(error) {
-    // Handle error
-  }
-});
-
-
-// Assuming you have already loaded Grapecity and opened both files
-
-// Get reference to source and destination sheets
-var sourceSheet = file1.getSheet(0); // Assuming sheet1 in file1
-var destSheet = file2.getSheet(0); // Assuming sheet1 in file2
-
-// Loop through cells in the source sheet
-sourceSheet.getRange().forEach(function(cell) {
-    // Copy content and formulas
-    var content = cell.text();
-    var formula = cell.formula();
-    
-    // Get corresponding cell in destination sheet
-    var destCell = destSheet.getCell(cell.row(), cell.col());
-    
-    // Paste content and formula
-    destCell.text(content);
-    destCell.formula(formula);
-    
-    // Add tag
-    destCell.tag("your_tag");
-});
-
-// Save changes to file2
-file2.save();
+// Optionally, save the target file
+// targetSpread.save('targetFile.xlsx'); 
