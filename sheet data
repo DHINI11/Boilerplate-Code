@@ -1,4 +1,4 @@
-// Load the two Excel files
+!!!!! Load the two Excel files
 var workbook1 = new GC.Spread.Sheets.Workbook(document.getElementById('workbook1'));
 var workbook2 = new GC.Spread.Sheets.Workbook(document.getElementById('workbook2'));
 
@@ -20,3 +20,30 @@ for (var i = 0; i < sheet1.getRowCount(); i++) {
         }
     }
 }
+
+
+!!
+
+// Assuming you have two ranges: range1 and range2
+
+var range1 = sheet.getRange(0, 0, 5, 5); // Example range 1
+var range2 = sheet.getRange(0, 0, 5, 5); // Example range 2
+
+var isEqual = true;
+
+range1.forEach(function(row, rowIndex) {
+    row.forEach(function(cell, colIndex) {
+        if(cell.value() !== range2.getValue(rowIndex, colIndex)) {
+            isEqual = false;
+            return false; // Exit loop early if a difference is found
+        }
+    });
+});
+
+if(isEqual) {
+    console.log("The ranges are equal.");
+} else {
+    console.log("The ranges are not equal.");
+}
+
+
