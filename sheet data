@@ -1,49 +1,88 @@
-!!!!! Load the two Excel files
-var workbook1 = new GC.Spread.Sheets.Workbook(document.getElementById('workbook1'));
-var workbook2 = new GC.Spread.Sheets.Workbook(document.getElementById('workbook2'));
+using HtmlAgilityPack;
 
-// Get the sheets you want to compare
-var sheet1 = workbook1.getSheet(0);
-var sheet2 = workbook2.getSheet(0);
+class Program
+{
+    static void Main(string[] args)
+    {
+        string htmlString = "<p>This is an example <strong>HTML</strong> string</p>";
 
-// Iterate through cells and compare values
-for (var i = 0; i < sheet1.getRowCount(); i++) {
-    for (var j = 0; j < sheet1.getColumnCount(); j++) {
-        var value1 = sheet1.getValue(i, j);
-        var value2 = sheet2.getValue(i, j);
-        
-        // Compare cell values
-        if (value1 !== value2) {
-            // Highlight or mark the differing cells
-            sheet1.getCell(i, j).backColor("red");
-            sheet2.getCell(i, j).backColor("red");
-        }
+        HtmlDocument doc = new HtmlDocument();
+        doc.LoadHtml(htmlString);
+
+        // Print the parsed HTML with original text case
+        string parsedHtml = doc.DocumentNode.OuterHtml;
+        Console.WriteLine(parsedHtml);
     }
 }
 
 
-!!
 
-// Assuming you have two ranges: range1 and range2
+using AngleSharp;
+using AngleSharp.Dom;
 
-var range1 = sheet.getRange(0, 0, 5, 5); // Example range 1
-var range2 = sheet.getRange(0, 0, 5, 5); // Example range 2
+class Program
+{
+    static void Main(string[] args)
+    {
+        string htmlString = "<p>This is an example <strong>HTML</strong> string</p>";
 
-var isEqual = true;
+        var config = Configuration.Default;
+        var context = BrowsingContext.New(config);
+        var document = context.OpenAsync(req => req.Content(htmlString)).Result;
 
-range1.forEach(function(row, rowIndex) {
-    row.forEach(function(cell, colIndex) {
-        if(cell.value() !== range2.getValue(rowIndex, colIndex)) {
-            isEqual = false;
-            return false; // Exit loop early if a difference is found
-        }
-    });
-});
-
-if(isEqual) {
-    console.log("The ranges are equal.");
-} else {
-    console.log("The ranges are not equal.");
+        // Print the parsed HTML with original text case
+        string parsedHtml = document.DocumentElement.OuterHtml;
+        Console.WriteLine(parsedHtml);
+    }
 }
 
 
+
+
+
+
+/// disable table row
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table Row Disable</title>
+</head>
+<body>
+
+<table id="myTable">
+  <tr>
+    <td>Value 1</td>
+  </tr>
+  <tr>
+    <td>Value 2</td>
+  </tr>
+  <tr>
+    <td>Value 3</td>
+  </tr>
+</table>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const table = document.getElementById('myTable');
+  const searchValue = 'Value 2'; // Value to search for
+
+  // Iterate over the rows of the table
+  Array.from(table.rows).forEach(row => {
+    // Use Array.find() to search for the value within each row
+    const cellWithValue = Array.from(row.cells).find(cell => cell.textContent === searchValue);
+    
+    // If the value is found, disable the row
+    if (cellWithValue) {
+      row.style.pointerEvents = 'none'; // Disable pointer events
+      row.style.opacity = 0.5; // Optionally, change the opacity to indicate it's disabled
+    }
+  });
+});
+</script>
+
+</body>
+</html>
