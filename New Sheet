@@ -1,0 +1,75 @@
+const CounterRow = ({ count, onIncrement, onDecrement, onDelete }) => {
+  return (
+    <div
+      style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+    >
+      <button onClick={onIncrement}>Increment</button>
+      <button onClick={onDecrement} style={{ marginLeft: "5px" }}>
+        Decrement
+      </button>
+      <span style={{ marginLeft: "10px", marginRight: "10px" }}>
+        Counter: {count}
+      </span>
+      <button onClick={onDelete}>Delete</button>
+    </div>
+  );
+};
+
+export default CounterRow;
+
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import CounterRow from "./components/CounterRow";
+
+function App() {
+  const [counters, setCounters] = useState([{ id: Date.now(), count: 0 }]);
+
+  const handleIncrement = (id) => {
+    setCounters(
+      counters.map((counter) =>
+        counter.id === id ? { ...counter, count: counter.count + 1 } : counter
+      )
+    );
+  };
+
+  const handleDecrement = (id) => {
+    setCounters(
+      counters.map((counter) =>
+        counter.id === id ? { ...counter, count: counter.count - 1 } : counter
+      )
+    );
+  };
+
+  const handleAddCounter = () => {
+    setCounters([...counters, { id: Date.now(), count: 0 }]);
+  };
+
+  const handleDeleteCounter = (id) => {
+    setCounters(counters.filter((counter) => counter.id !== id));
+  };
+
+  const totalCount = counters.reduce((sum, counter) => sum + counter.count, 0);
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <h1>Total Count: {totalCount}</h1>
+        <button onClick={handleAddCounter}>Add Counter</button>
+        {counters.map((counter) => (
+          <CounterRow
+            key={counter.id}
+            count={counter.count}
+            onIncrement={() => handleIncrement(counter.id)}
+            onDecrement={() => handleDecrement(counter.id)}
+            onDelete={() => handleDeleteCounter(counter.id)}
+          />
+        ))}
+      </header>
+    </div>
+  );
+}
+
+export default App;
+
