@@ -1,0 +1,37 @@
+Steps:
+
+1. Open your file in Notepad++.
+
+
+2. Press Ctrl + H to bring up the "Find and Replace" window.
+
+
+3. In the "Find what" field, enter the following regex pattern:
+
+(<a[^>]*\bid="[^"]*)[!_]+([^"]*")
+
+This pattern finds any occurrence of ! or _ within the id attribute of an <a> tag.
+
+
+4. In the "Replace with" field, use:
+
+\1\2
+
+
+5. Ensure "Regular Expression" mode is selected at the bottom of the window.
+
+
+6. Click "Replace All" to remove !_ from all anchor tag IDs in the document.
+
+
+
+Explanation:
+
+(<a[^>]*\bid="[^"]*): Matches the start of the <a> tag and everything up to the id value before the ! or _.
+
+[!_]+: Matches one or more occurrences of ! or _ in the id.
+
+([^"]*"): Captures the rest of the id value after the !_.
+
+
+By replacing with \1\2, you effectively remove the !_ characters but keep the rest of the ID intact.
