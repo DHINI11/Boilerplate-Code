@@ -1,37 +1,70 @@
-Steps:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-1. Open your file in Notepad++.
+public class Link
+{
+    public int LinkId { get; set; }
+    public string Value { get; set; }
+}
 
+public class Program
+{
+    public static void Main()
+    {
+        // Sample data
+        List<Link> linkedCell = new List<Link>
+        {
+            new Link { LinkId = 1, Value = "LinkedValue1" },
+            new Link { LinkId = 2, Value = "LinkedValue2" }
+            // Add more items as needed
+        };
 
-2. Press Ctrl + H to bring up the "Find and Replace" window.
+        List<Link> webList = new List<Link>
+        {
+            new Link { LinkId = 1, Value = "WebValue1" },
+            new Link { LinkId = 2, Value = "WebValue2" },
+            // Add more items to simulate 5000 items
+        };
 
+        UpdateWebListValues(linkedCell, webList);
 
-3. In the "Find what" field, enter the following regex pattern:
+        // Print updated WebList
+        foreach (var link in webList)
+        {
+            Console.WriteLine($"LinkId: {link.LinkId}, Value: {link.Value}");
+        }
+    }
 
-(<a[^>]*\bid="[^"]*)[!_]+([^"]*")
+    public static void UpdateWebListValues(List<Link> linkedCell, List<Link> webList)
+    {
+        int numberOfThreads = Environment.ProcessorCount; // Adjust this based on the number of available CPU cores
+        int chunkSize = webList.Count / numberOfThreads;
 
-This pattern finds any occurrence of ! or _ within the id attribute of an <a> tag.
+        var tasks = new List<Task>();
 
+        for (int i = 0; i < numberOfThreads; i++)
+        {
+            int start = i * chunkSize;
+            int end = (i == numberOfThreads - 1) ? webList.Count : start + chunkSize;
 
-4. In the "Replace with" field, use:
+            tasks.Add(Task.Run(() => UpdateChunk(linkedCell, webList, start, end)));
+        }
 
-\1\2
+        Task.WaitAll(tasks.ToArray());
+    }
 
-
-5. Ensure "Regular Expression" mode is selected at the bottom of the window.
-
-
-6. Click "Replace All" to remove !_ from all anchor tag IDs in the document.
-
-
-
-Explanation:
-
-(<a[^>]*\bid="[^"]*): Matches the start of the <a> tag and everything up to the id value before the ! or _.
-
-[!_]+: Matches one or more occurrences of ! or _ in the id.
-
-([^"]*"): Captures the rest of the id value after the !_.
-
-
-By replacing with \1\2, you effectively remove the !_ characters but keep the rest of the ID intact.
+    private static void UpdateChunk(List<Link> linkedCell, List<Link> webList, int start, int end)
+    {
+        for (int i = start; i < end; i++)
+        {
+            var webLink = webList[i];
+            var match = linkedCell.FirstOrDefault(link => link.LinkId == webLink.LinkId);
+            if (match != null)
+            {
+                webLink.Value = match.Value;
+            }
+        }
+    }
+}
